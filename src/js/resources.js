@@ -1,10 +1,18 @@
-import { ImageSource, Sound, Resource, Loader } from 'excalibur'
+import { ImageSource, Sound, Resource, Loader, ImageWrapping } from 'excalibur'
 
 const Resources = {
-    Fish: new ImageSource('images/fish.png')
+    Bluerunner: new ImageSource('images/bluerunner2.png', { width: 256, height: 256, rows: 1, columns: 8 }),
+
+    Background: new ImageSource('images/background.png', { wrapping: ImageWrapping.Repeat}),
+    Rock: new ImageSource('images/rock.png'),
+    Zubat: new ImageSource('images/zubat.png')
 }
 const ResourceLoader = new Loader([
-    Resources.Fish
+    Resources.Background,
+    Resources.Bluerunner,
+    Resources.Rock,
+    Resources.Zubat
+    
 ])
 
 export { Resources, ResourceLoader }
