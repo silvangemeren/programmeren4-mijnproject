@@ -1,30 +1,41 @@
-import { Actor, Vector, CollisionType } from "excalibur";
-import { Resources } from './resources.js';
-import '../css/style.css'
+import { Actor, Vector, Keys, CollisionType } from "excalibur";
+import { Resources } from './resources';
 
-export class BlueRunner extends Actor {
-    constructor() {
+export class Bluerunner extends Actor {
+    constructor(width = 10, height = 10) {
         super({
-            pos: new Vector(300, 310),
-            vel: new Vector(0, 0),
-            collisionType: CollisionType.Active //
+            width: width,
+            height: height,
+            collisionType: CollisionType.Active
         });
-        this.graphics.use(Resources.Bluerunner.toSprite());
-        this.transform.scale = new Vector(0.2, 0.2);
     }
 
-    jump() {
-        if (this.vel.y === 0) {  // Check if the runner is on the ground
-            this.vel.y = -600;
+    onInitialize(engine) {
+        const sprite = Resources.Bluerunner.toSprite();
+        sprite.scale = new Vector(0.3, 0.3);
+        this.graphics.use(sprite);
+
+        this.on('collisionstart', (event) => this.hitSomething(event));
+    }
+
+    hitSomething(event) {
+        if (event.other instanceof Rock || event.other instanceof Zubat) {
+            console.log('dood');
         }
     }
 
-    duck() {
-        this.transform.scale = new Vector(0.2, 0.1);  // Change scale to simulate ducking
-    }
+    onPostUpdate(engine) {
+        let yspeed = 0;
+        const maxSpeed = 500;
 
-    stand() {
-        this.transform.scale = new Vector(0.2, 0.2);  // Revert scale to normal
-    }
+        if (engine.input.keyboard.isHeld(Keys.W)) {
+            yspeed = -maxSpeed;
+        } else if (engine.input.keyboard.isHeld(Keys.S)) {
+            yspeed = maxSpeed;
+        }
 
+        this.vel.y = yspeed;
+        this.pos.x = Math.max(0, Math.min(this.pos.x, engine.drawWidth - this.width));
+        this.pos.y = Math.max(0, Math.min(this.pos.y, engine.drawHeight - this.height));
+    }
 }

@@ -1,75 +1,62 @@
-// import '../css/style.css'
-// import { Actor, Engine, Vector, Input, CollisionType } from "excalibur"
-// import { Resources, ResourceLoader } from './resources.js'
-// import { BlueRunner } from './bluerunner.js'
-// import { Background } from './background.js'
-// import { Rock } from './rock.js'
-// import { Zubat } from './zubat.js'
-// import { GameOverScene } from './gameover.js'
 
-// export class Game extends Engine {
+import { Scene, Vector } from "excalibur";
+import { Zubat } from './zubat.js';
+import { Resources } from './resources.js';
+import { Rock } from './rock.js';
+import { Bluerunner } from './bluerunner.js';
+import { Background } from './background.js';
+import { ScoreLabel } from './score.js';
 
-//     constructor() {
-//         super({ width: 800, height: 600 })
-//         this.start(ResourceLoader).then(() => this.startGame())
-//     }
+export class MainGame extends Scene {
+    score = 0;
+    scoreLabel;
 
-//     startGame() {
-//         console.log("start de game!")
+    addPoints(points) {
+        this.score += points;
+        this.updateScore();
+    }
 
-//         const background = new Background();
-//         this.add(background)
+    updateScore() {
+        this.scoreLabel.updateScore(this.score);
+    }
 
-//         this.bluerunner = new BlueRunner();
-//         this.bluerunner.collisionType = CollisionType.Active; // Set collision type to Active
-//         this.add(this.bluerunner)
+    onActivate() {
+        console.log("start de game!");
 
-//         this.addObstacle();
+        // Score
+        this.score = 0;
+        this.scoreLabel = new ScoreLabel(this.score);
+        this.add(this.scoreLabel);
 
-//         this.add('gameover', new GameOverScene());
-//     }
+        // Background
+        const background = new Background();
+        this.add(background);
 
-//     addObstacle() {
-//         const rock = new Rock();
-//         rock.collisionType = CollisionType.Active; // Set collision type to Active
-//         this.add(rock);
+        // Rock
+        const rock = new Rock(580, 200);
+        this.add(rock);
 
-//         const zubat = new Zubat();
-//         zubat.collisionType = CollisionType.Active; // Set collision type to Active
-//         this.add(zubat);
+        // Player
+        const player = new Bluerunner();
+        player.pos = new Vector(400, 800);
+        this.add(player);
 
-//         this.obstacleTimer = this.clock.schedule(() => this.addObstacle(), 2000);
-//     }
+        // Zubat
+        const zubat = new Zubat(500, 300);
+        this.add(zubat);
 
-//     update(engine, delta) {
-//         super.update(engine, delta);
+        player.on('collisionstart', (event) => {
+            if (event.other instanceof Zubat || event.other instanceof Rock) {
+                this.engine.goToScene('gameOver', { sceneActivationData: this.score });
+                for (const actor of this.actors) {
+                    actor.kill();
+                }
+            }
+        });
+    }
 
-//         // Check collisions
-//         this.currentScene.actors.forEach(actor => {
-//             if (actor instanceof Rock || actor instanceof Zubat) {
-//                 if (actor.collides(this.bluerunner)) {
-//                     this.gameOver();
-//                 }
-//             }
-//         });
-
-//         // Player controls
-//         const input = this.input.keyboard;
-//         if (input.isHeld(Input.Keys.Space)) {
-//             this.bluerunner.jump();
-//         }
-//         if (input.isHeld(Input.Keys.ShiftLeft)) {
-//             this.bluerunner.duck();
-//         } else {
-//             this.bluerunner.stand();
-//         }
-//     }
-
-//     gameOver() {
-//         console.log("Game Over!");
-//         this.obstacleTimer.cancel();
-//         this.goToScene('gameover');
-//     }
-// }
-
-// new Game()
+    onPostUpdate(engine) {
+        this.addPoints(1);
+        console.log(this.score);
+    }
+}

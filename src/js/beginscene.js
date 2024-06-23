@@ -1,20 +1,40 @@
-import { Scene, Label, Color, Vector, Input } from 'excalibur';
+import { Scene, Label, Vector, Color, Font } from 'excalibur';
+import { Background } from './background.js';
 
 export class BeginScene extends Scene {
-    onInitialize(engine) {
-        const beginLabel = new Label({
-            text: 'Zubatdodge',
-            pos: new Vector(400, 300),
-            color: Color.White,
-            font: new ex.Font({
-                family: 'Arial',
-                size: 48,
-                unit: ex.FontUnit.Px
-            }),
-            textAlign: ex.TextAlign.Center
+    constructor(engine) {
+        super();
+
+        // Achtergrond toevoegen
+        const background = new Background();
+        this.add(background);
+
+        let label = new Label({
+            text: 'Zubat Dodge',
+            pos: new Vector(100, 100),
+            font: new Font({
+                color: Color.White,
+                family: 'impact',
+                size: 120,
+            })
         });
 
-        this.add(beginLabel);
+        const GoToGame = new Label({
+            text: 'Start Game',
+            pos: new Vector(500, 400),
+            font: new Font({
+                family: 'bold',
+                size: 80,
+            }),
+            color: Color.White
+        });
 
+        GoToGame.on('pointerup', () => {
+            // Start het spel
+            engine.goToScene('MainGame');
+        });
+
+        this.add(label);
+        this.add(GoToGame);
     }
 }
