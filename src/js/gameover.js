@@ -1,15 +1,15 @@
-import { Scene, Label, Color, Vector, Font } from 'excalibur';
+import { Scene, Label, Color, Vector } from 'excalibur';
 
 export class GameOverScene extends Scene {
     onInitialize(engine) {
-        const gameOverLabel = new Label({
+        const gameOverLabel = new Label({ 
             text: 'Game Over',
             pos: new Vector(400, 300),
             color: Color.White,
-            font: new Font({
+            font: new ex.Font({
                 family: 'Arial',
                 size: 48,
-                unit: 'px'  // Gebruik een string voor de eenheid van de lettergrootte
+                unit: ex.FontUnit.Px
             })
         });
         this.add(gameOverLabel);

@@ -1,21 +1,45 @@
-import { Actor, Vector, CollisionType } from "excalibur";
-import { Resources } from './resources.js';
 
-export class Rock extends Actor {
-    constructor() {
-        super({
-            pos: new Vector(800, 500),
-            vel: new Vector(-200, 0),
-            collisionType: CollisionType.Active // Set collision type to Active
-        });
-        this.graphics.use(Resources.Rock.toSprite());
-        this.transform.scale = new Vector(0.2, 0.2);
+import { Actor, Engine, Vector } from "excalibur"
+import { Object } from './object'
+import { Resources } from './resources'
+import { Zubat } from "./zubat";
+
+export class Rock extends Object {
+    constructor(x, y) {
+        super(); 
+        this.pos = new Vector(x, y);
+        this.time = 0; 
+        this.canCollide = false;
+        setTimeout(() => {
+            this.canCollide = true;
+        }, 150);
     }
 
-    onPostUpdate(engine, delta) {
-        // Check if the rock is outside the screen bounds
-        if (this.pos.x < -50) {
-            this.kill(); // Destroy the rock
+    onInitialize(engine) {
+        let sprite = Resources.Rock.toSprite();
+        sprite.scale = new Vector(0.1, 0.1); 
+        this.graphics.use(sprite);
+        this.on('collisionstart', (event) => this.hitSomething(event));
+    }
+
+    hitSomething(event) {
+        if (!this.canCollide) return;
+
+        if (event.other instanceof Zubat) {
+        
+
+            if (event.other.pos.x > this.pos.x) {
+                event.other.pos.x += 30;
+            } else {
+                event.other.pos.x -= 30;
+            }
         }
+    }
+
+    update(engine, delta) {
+        super.update(engine, delta);
+        
+        this.time += delta; 
+        this.pos.x += Math.sin(this.time / 200) * 10; 
     }
 }

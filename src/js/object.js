@@ -1,21 +1,20 @@
 import { Actor, Vector } from 'excalibur';
-import { getRandomY } from './utils.js'; // Importeer de functie voor het verkrijgen van willekeurige y-posities
 
 export class Object extends Actor {
     constructor() {
         super({ width: 100, height: 100 });
 
         // Initialize outside the screen on the right side
-        this.pos.x = 1000; // Start buiten het scherm aan de rechterkant
-        this.pos.y = getRandomY(); // Gebruik de functie om een willekeurige Y-positie te verkrijgen
+        this.pos.x = 1200; // Start outside the screen on the right
+        this.pos.y = Math.random() * (600 - 100) + 100; // Randomize Y position within bounds
 
         // Initial speed
-        this.initialSpeed = -Math.random() * 500 - 50;
-        this.vel = new Vector(this.initialSpeed, 0); // Aanpassen van snelheid indien nodig
+        this.initialSpeed = -Math.random() * 1000 - 50;
+        this.vel = new Vector(this.initialSpeed, 0); // Adjust speed as needed
 
         // Increase speed over time
-        this.speedIncrease = 400; // Snelheidsverhoging
-        this.maxSpeed = 1000; // Maximale snelheid
+        this.speedIncrease = 20; // Speed increase amount
+        this.maxSpeed = -1000; // Maximum speed
 
         this.on('exitviewport', () => this.resetPosition());
     }
@@ -30,8 +29,8 @@ export class Object extends Actor {
     }
 
     resetPosition() {
-        this.pos.x = 1000; // Start buiten het scherm aan de rechterkant
-        this.pos.y = getRandomY(); // Gebruik de functie om een willekeurige Y-positie te verkrijgen
-        // this.vel.x = this.initialSpeed; // Reset velocity
+        this.pos.x = 1200; // Start outside the screen on the right
+        this.pos.y = Math.random() * (600 - 100) + 100; // Randomize Y position within bounds
+        this.vel.x = this.initialSpeed; // Reset velocity
     }
 }

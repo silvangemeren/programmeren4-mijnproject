@@ -1,21 +1,19 @@
-import { Actor, Engine, Vector, Sprite } from "excalibur"
-import { Resources } from './resources.js'
-import '../css/style.css'
+
+import { Actor, Vector } from 'excalibur';
+import { Resources } from './resources';
 
 export class Background extends Actor {
-
-    
-
-    onInitialize(engine){
-        this.sprite = new Sprite({
-            image: Resources.Background,
-            sourceView: { x: 0, y: 0, width: engine.drawWidth, height: engine.drawHeight }
-        })
-        this.anchor = Vector.Zero
-        this.graphics.use(this.sprite)
+    constructor() {
+        super({
+            anchor: new Vector(0, 0),
+            pos: new Vector(0, 0),
+            z: -1 // Zorg ervoor dat de achtergrond zich achter andere objecten bevindt
+        });
     }
 
-    onPostUpdate(engine, delta) {
-        this.sprite.sourceView.x += .5 * delta;
+    onInitialize(engine) {
+        const sprite = Resources.Background.toSprite();
+        sprite.scale = new Vector(engine.drawWidth / sprite.width, engine.drawHeight / sprite.height);
+        this.graphics.use(sprite);
     }
 }
