@@ -3,6 +3,13 @@ import { Resources, ResourceLoader } from './resources';
 import { GameOverScene } from './gameover';
 import { MainGame } from './gameplay';
 import { BeginScene } from './beginscene';
+import { Background } from './background';
+import { Zubat } from './zubat';
+import { Rock } from './rock';
+import { Bluerunner } from './bluerunner';
+import { ScoreLabel } from './score';
+
+
 
 export class Game extends Engine {
     constructor() {
@@ -22,6 +29,8 @@ export class Game extends Engine {
         this.add('BeginScene', new BeginScene(this));
         this.goToScene('BeginScene');
     }
+
+
 }
 
 new Game();
