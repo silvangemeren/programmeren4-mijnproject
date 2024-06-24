@@ -1,62 +1,73 @@
-
 import { Scene, Vector } from "excalibur";
 import { Zubat } from './zubat.js';
-import { Resources } from './resources.js';
+import { Resources, ResourceLoader } from './resources.js';
 import { Rock } from './rock.js';
 import { Bluerunner } from './bluerunner.js';
 import { Background } from './background.js';
 import { ScoreLabel } from './score.js';
+import { getRandomY } from './utils.js'; // Importeer de functie voor het verkrijgen van willekeurige y-posities
 
 export class MainGame extends Scene {
-    score = 0;
-    scoreLabel;
-
-    addPoints(points) {
-        this.score += points;
-        this.updateScore();
-    }
-
-    updateScore() {
-        this.scoreLabel.updateScore(this.score);
+    constructor() {
+        super();
+        this.score = 0;
+        this.scoreLabel = null;
     }
 
     onActivate() {
-        console.log("start de game!");
+        console.log("Start het spel!");
 
         // Score
         this.score = 0;
         this.scoreLabel = new ScoreLabel(this.score);
         this.add(this.scoreLabel);
 
-        // Background
+        // Achtergrond
         const background = new Background();
         this.add(background);
 
-        // Rock
-        const rock = new Rock(580, 200);
-        this.add(rock);
+        // Rotsen
+        const rock1 = new Rock(580, getRandomY());
+        this.add(rock1);
 
-        // Player
+        const rock2 = new Rock(980, getRandomY());
+        this.add(rock2);
+
+        // Zubats
+        const zubat1 = new Zubat(500, getRandomY());
+        this.add(zubat1);
+
+        const zubat2 = new Zubat(800, getRandomY());
+        this.add(zubat2);
+
+        // Speler
         const player = new Bluerunner();
-        player.pos = new Vector(400, 800);
+        player.pos = new Vector(500, 168);
         this.add(player);
 
-        // Zubat
-        const zubat = new Zubat(500, 300);
-        this.add(zubat);
-
+        // Botsingsdetectie
         player.on('collisionstart', (event) => {
             if (event.other instanceof Zubat || event.other instanceof Rock) {
+                console.log('Game over');
                 this.engine.goToScene('gameOver', { sceneActivationData: this.score });
-                for (const actor of this.actors) {
-                    actor.kill();
-                }
+                this.killAllActors(); // Optioneel: vernietig alle actoren bij game over
             }
         });
     }
 
+    killAllActors() {
+        // Doorloop alle actoren en vernietig ze
+        this.actors.forEach(actor => actor.kill());
+    }
+
     onPostUpdate(engine) {
+        // Voeg punten toe aan de score
         this.addPoints(1);
-        console.log(this.score);
+    }
+
+    addPoints(points) {
+        // Update de score en het scorelabel
+        this.score += points;
+        this.scoreLabel.updateScore(this.score);
     }
 }
