@@ -1,73 +1,75 @@
-import { Scene, Vector } from "excalibur";
-import { Zubat } from './zubat.js';
-import { Resources, ResourceLoader } from './resources.js';
-import { Rock } from './rock.js';
-import { Bluerunner } from './bluerunner.js';
-import { Background } from './background.js';
-import { ScoreLabel } from './score.js';
-import { getRandomY } from './utils.js'; // Importeer de functie voor het verkrijgen van willekeurige y-posities
+// import '../css/style.css'
+// import { Actor, Engine, Vector, Input, CollisionType } from "excalibur"
+// import { Resources, ResourceLoader } from './resources.js'
+// import { BlueRunner } from './bluerunner.js'
+// import { Background } from './background.js'
+// import { Rock } from './rock.js'
+// import { Zubat } from './zubat.js'
+// import { GameOverScene } from './gameover.js'
 
-export class MainGame extends Scene {
-    constructor() {
-        super();
-        this.score = 0;
-        this.scoreLabel = null;
-    }
+// export class Game extends Engine {
 
-    onActivate() {
-        console.log("Start het spel!");
+//     constructor() {
+//         super({ width: 800, height: 600 })
+//         this.start(ResourceLoader).then(() => this.startGame())
+//     }
 
-        // Score
-        this.score = 0;
-        this.scoreLabel = new ScoreLabel(this.score);
-        this.add(this.scoreLabel);
+//     startGame() {
+//         console.log("start de game!")
 
-        // Achtergrond
-        const background = new Background();
-        this.add(background);
+//         const background = new Background();
+//         this.add(background)
 
-        // Rotsen
-        const rock1 = new Rock(580, getRandomY());
-        this.add(rock1);
+//         this.bluerunner = new BlueRunner();
+//         this.bluerunner.collisionType = CollisionType.Active; // Set collision type to Active
+//         this.add(this.bluerunner)
 
-        const rock2 = new Rock(980, getRandomY());
-        this.add(rock2);
+//         this.addObstacle();
 
-        // Zubats
-        const zubat1 = new Zubat(500, getRandomY());
-        this.add(zubat1);
+//         this.add('gameover', new GameOverScene());
+//     }
 
-        const zubat2 = new Zubat(800, getRandomY());
-        this.add(zubat2);
+//     addObstacle() {
+//         const rock = new Rock();
+//         rock.collisionType = CollisionType.Active; // Set collision type to Active
+//         this.add(rock);
 
-        // Speler
-        const player = new Bluerunner();
-        player.pos = new Vector(500, 168);
-        this.add(player);
+//         const zubat = new Zubat();
+//         zubat.collisionType = CollisionType.Active; // Set collision type to Active
+//         this.add(zubat);
 
-        // Botsingsdetectie
-        player.on('collisionstart', (event) => {
-            if (event.other instanceof Zubat || event.other instanceof Rock) {
-                console.log('Game over');
-                this.engine.goToScene('gameOver', { sceneActivationData: this.score });
-                this.killAllActors(); // Optioneel: vernietig alle actoren bij game over
-            }
-        });
-    }
+//         this.obstacleTimer = this.clock.schedule(() => this.addObstacle(), 2000);
+//     }
 
-    killAllActors() {
-        // Doorloop alle actoren en vernietig ze
-        this.actors.forEach(actor => actor.kill());
-    }
+//     update(engine, delta) {
+//         super.update(engine, delta);
 
-    onPostUpdate(engine) {
-        // Voeg punten toe aan de score
-        this.addPoints(1);
-    }
+//         // Check collisions
+//         this.currentScene.actors.forEach(actor => {
+//             if (actor instanceof Rock || actor instanceof Zubat) {
+//                 if (actor.collides(this.bluerunner)) {
+//                     this.gameOver();
+//                 }
+//             }
+//         });
 
-    addPoints(points) {
-        // Update de score en het scorelabel
-        this.score += points;
-        this.scoreLabel.updateScore(this.score);
-    }
-}
+//         // Player controls
+//         const input = this.input.keyboard;
+//         if (input.isHeld(Input.Keys.Space)) {
+//             this.bluerunner.jump();
+//         }
+//         if (input.isHeld(Input.Keys.ShiftLeft)) {
+//             this.bluerunner.duck();
+//         } else {
+//             this.bluerunner.stand();
+//         }
+//     }
+
+//     gameOver() {
+//         console.log("Game Over!");
+//         this.obstacleTimer.cancel();
+//         this.goToScene('gameover');
+//     }
+// }
+
+// new Game()

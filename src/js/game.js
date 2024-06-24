@@ -1,17 +1,17 @@
+import '../css/style.css';
 import { Engine, DisplayMode } from 'excalibur';
-import { Resources, ResourceLoader } from './resources';
-import { GameOverScene } from './gameover';
-import { MainGame } from './gameplay';
-import { BeginScene } from './beginscene';
-import { Background } from './background';
-import { Zubat } from './zubat';
-import { Rock } from './rock';
-import { Bluerunner } from './bluerunner';
-import { ScoreLabel } from './score';
-
-
+import { Resources, ResourceLoader } from './resources.js';
+import { GameOverScene } from './gameover.js';
+import { MainGame } from './gameplay.js';
+import { BeginScene } from './beginscene.js';
 
 export class Game extends Engine {
+    ui;
+
+    resetGame() {
+        this.goToScene('MainGame');
+    }
+
     constructor() {
         super({ 
             width: 980,
@@ -20,17 +20,16 @@ export class Game extends Engine {
             displayMode: DisplayMode.FitScreen
         });
 
+        this.add('MainGame', new MainGame());
+        this.add('gameOver', new GameOverScene(this));
+        this.add('BeginScene', new BeginScene(this));
+
         this.start(ResourceLoader).then(() => this.startGame());
     }
 
     startGame() {
-        this.add('MainGame', new MainGame());
-        this.add('gameOver', new GameOverScene(this));
-        this.add('BeginScene', new BeginScene(this));
         this.goToScene('BeginScene');
     }
-
-
 }
 
 new Game();

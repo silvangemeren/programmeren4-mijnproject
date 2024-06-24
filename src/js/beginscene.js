@@ -1,15 +1,15 @@
-import { Scene, Label, Color, Vector, Font, Input } from 'excalibur';
+import { Scene, Label, Vector, Color, Font } from 'excalibur';
+import { Background } from './background.js';
 
 export class BeginScene extends Scene {
     constructor(engine) {
-        super(engine);
+        super();
 
-        // Achtergrond toevoegen (voorbeeld: aanname dat Background correct is geïmplementeerd in background.js)
-        // const background = new Background();
-        // this.add(background);
+        // Achtergrond toevoegen
+        const background = new Background();
+        this.add(background);
 
-        // Titellabel toevoegen
-        let titleLabel = new Label({
+        let label = new Label({
             text: 'Zubat Dodge',
             pos: new Vector(100, 100),
             font: new Font({
@@ -18,10 +18,8 @@ export class BeginScene extends Scene {
                 size: 120,
             })
         });
-        this.add(titleLabel);
 
-        // Start Game knop toevoegen
-        const startButton = new Label({
+        const GoToGame = new Label({
             text: 'Start Game',
             pos: new Vector(500, 400),
             font: new Font({
@@ -30,16 +28,13 @@ export class BeginScene extends Scene {
             }),
             color: Color.White
         });
-        startButton.on('pointerup', (evt) => {
-            if (evt.pointerType === Input.PointerType.Mouse) {
-                // Controleer of engine en goToScene beschikbaar zijn
-                if (this.engine && this.engine.goToScene) {
-                    this.engine.goToScene('MainGame');
-                } else {
-                    console.error('Engine or goToScene method not available');
-                }
-            }
+
+        GoToGame.on('pointerup', () => {
+            // Start het spel
+            engine.goToScene('MainGame');
         });
-        this.add(startButton);
+
+        this.add(label);
+        this.add(GoToGame);
     }
 }
