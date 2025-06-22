@@ -10,10 +10,12 @@ export class Bluerunner extends Actor {
         });
     }
 
+    currentSprite; // Houdt de huidige sprite bij
+
     onInitialize(engine) {
-        const sprite = Resources.Bluerunner.toSprite();
-        sprite.scale = new Vector(0.3, 0.3);
-        this.graphics.use(sprite);
+        this.currentSprite = Resources.Bluerunner.toSprite(); // Standaard sprite
+        this.currentSprite.scale = new Vector(0.3, 0.3);
+        this.graphics.use(this.currentSprite);
 
         this.on('collisionstart', (event) => this.hitSomething(event));
     }
@@ -30,8 +32,20 @@ export class Bluerunner extends Actor {
 
         if (engine.input.keyboard.isHeld(Keys.W)) {
             yspeed = -maxSpeed;
+            // Wissel terug naar de standaard `Bluerunner`-afbeelding
+            if (this.currentSprite !== Resources.Bluerunner.toSprite()) {
+                this.currentSprite = Resources.Bluerunner.toSprite();
+                this.currentSprite.scale = new Vector(0.3, 0.3);
+                this.graphics.use(this.currentSprite);
+            }
         } else if (engine.input.keyboard.isHeld(Keys.S)) {
             yspeed = maxSpeed;
+            // Wissel naar de `Bluerunnertwee`-afbeelding
+            if (this.currentSprite !== Resources.Bluerunnertwee.toSprite()) {
+                this.currentSprite = Resources.Bluerunnertwee.toSprite();
+                this.currentSprite.scale = new Vector(0.3, 0.3);
+                this.graphics.use(this.currentSprite);
+            }
         }
 
         this.vel.y = yspeed;
