@@ -1,36 +1,33 @@
-import { Actor, Vector } from 'excalibur';
+import { Actor, Vector, CollisionType, Shape } from "excalibur";
 
 export class Object extends Actor {
     constructor() {
-        super({ width: 100, height: 100 });
+        super({
+            collisionType: CollisionType.Passive, // Passieve botsing voor obstakels
+            pos: new Vector(1200, 0), // Spawnpositie
+        });
 
-        // Initialize outside the screen on the right side
-        this.pos.x = 1200; // Start outside the screen on the right
-        this.pos.y = Math.random() * (600 - 100) + 100; // Randomize Y position within bounds
+        // Maak een standaard collider voor het object
+        this.collider.set(Shape.Box(100, 100)); // Rechthoekige botsingsvorm
+        this.vel = new Vector(-300, 0); // Horizontale snelheid (linksbeweging)
+    }
 
-        // Initial speed
-        this.initialSpeed = -Math.random() * 1000 - 50;
-        this.vel = new Vector(this.initialSpeed, 0); // Adjust speed as needed
-
-        // Increase speed over time
-        this.speedIncrease = 20; // Speed increase amount
-        this.maxSpeed = -1000; // Maximum speed
-
-        this.on('exitviewport', () => this.resetPosition());
+    onInitialize(engine) {
+        console.log(`Object spawned at position: x=${this.pos.x}, y=${this.pos.y}`);
     }
 
     update(engine, delta) {
         super.update(engine, delta);
 
-        // Increase speed gradually
-        if (this.vel.x > this.maxSpeed) {
-            this.vel.x -= this.speedIncrease * delta / 100;
-        }
-    }
+        // Update positie van het object
+        this.pos.x += this.vel.x * (delta / 1000);
 
-    resetPosition() {
-        this.pos.x = 1200; // Start outside the screen on the right
-        this.pos.y = Math.random() * (600 - 100) + 100; // Randomize Y position within bounds
-        this.vel.x = this.initialSpeed; // Reset velocity
+        // Debug: Controleer objectpositie
+        console.log(`Object updated: x=${this.pos.x}`);
+
+        // Verwijder object als het buiten de viewport gaat
+        if (this.pos.x < -100) {
+            this.kill();
+        }
     }
 }

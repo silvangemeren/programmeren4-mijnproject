@@ -1,45 +1,22 @@
-
-import { Actor, Engine, Vector } from "excalibur"
-import { Object } from './object'
-import { Resources } from './resources'
-import { Zubat } from "./zubat";
+import { Object } from './object';
+import { Resources } from './resources';
+import { Vector, CollisionType, Shape } from 'excalibur';
 
 export class Rock extends Object {
-    constructor(x, y) {
-        super(); 
-        this.pos = new Vector(x, y);
-        this.time = 0; 
-        this.canCollide = false;
-        setTimeout(() => {
-            this.canCollide = true;
-        }, 150);
+    constructor(x) {
+        super();
+
+        this.pos = new Vector(x, 900); // Plaats op de grond (zelfde hoogte als Bluerunner)
+        this.collisionType = CollisionType.Passive; // Passieve botsing voor obstakels
     }
 
     onInitialize(engine) {
-        let sprite = Resources.Rock.toSprite();
-        sprite.scale = new Vector(0.1, 0.1); 
+        const sprite = Resources.Rock.toSprite();
+        sprite.scale = new Vector(0.2, 0.2); // Maakt de sprite kleiner
         this.graphics.use(sprite);
-        this.on('collisionstart', (event) => this.hitSomething(event));
-    }
 
-    hitSomething(event) {
-        if (!this.canCollide) return;
-
-        if (event.other instanceof Zubat) {
-        
-
-            if (event.other.pos.x > this.pos.x) {
-                event.other.pos.x += 30;
-            } else {
-                event.other.pos.x -= 30;
-            }
-        }
-    }
-
-    update(engine, delta) {
-        super.update(engine, delta);
-        
-        this.time += delta; 
-        this.pos.x += Math.sin(this.time / 200) * 10; 
+        // Stel de collider in
+        this.collider.set(Shape.Box(100, 100)); // Box van 40x40 pixels
+        console.log('Rock collider ingesteld met afmetingen: 40x40');
     }
 }

@@ -1,6 +1,5 @@
-import { Scene, Vector } from "excalibur";
+import { Scene } from "excalibur";
 import { Zubat } from './zubat.js';
-import { Resources } from './resources.js';
 import { Rock } from './rock.js';
 import { Bluerunner } from './bluerunner.js';
 import { Background } from './background.js';
@@ -9,6 +8,7 @@ import { ScoreLabel } from './score.js';
 export class MainGame extends Scene {
     score = 0;
     scoreLabel;
+    spawnTimer = 0; // Timer voor het spawnen van obstakels
 
     addPoints(points) {
         this.score += points;
@@ -19,56 +19,48 @@ export class MainGame extends Scene {
         this.scoreLabel.updateScore(this.score);
     }
 
-    onActivate() {
-        console.log("start de game!");
+    onActivate(context) {
+        console.log("Start de game!");
 
         // **Achtergrond**
         const background = new Background();
-        background.z = -1; // Achter alle objecten plaatsen
+        background.z = -1; // Achtergrond achter andere objecten
         this.add(background);
 
         // **Score UI**
-        this.score = 0;
-        this.scoreLabel = new ScoreLabel(this.score);
+        this.scoreLabel = new ScoreLabel(0);
         this.scoreLabel.z = 10; // Scorelabel bovenop plaatsen
         this.add(this.scoreLabel);
 
-        // **Rocks (obstakels)**
-        const rock = new Rock(580, 200);
-        rock.z = 1; // Plaats Rocks bovenop de achtergrond
-        this.add(rock);
-
-        // **Player**
+        // **Player (Bluerunner)**
         const player = new Bluerunner();
-        player.z = 1; // Player moet bovenop de achtergrond
-        player.pos = new Vector(400, 800);
+        player.z = 1;
         this.add(player);
-
-        // **Zubat (vijand)**
-        const zubat = new Zubat(500, 300);
-        zubat.z = 1; // Plaats Zubat bovenop de achtergrond
-        this.add(zubat);
-
-        // **Collision Event**
-        player.on('collisionstart', (event) => {
-            if (event.other instanceof Zubat || event.other instanceof Rock) {
-                console.log('Collision detected! Switching to the GameOver scene...');
-
-                // Overgangen mogelijk maken naar GameOver
-                try {
-                    this.engine.goToScene('gameOver', { sceneActivationData: this.score });
-                } catch (e) {
-                    console.error('Fout tijdens het schakelen naar de gameOver-scène:', e);
-                }
-
-                // Zorg dat alle acteurs worden verwijderd
-                this.actors.forEach((actor) => actor.kill());
-            }
-        });
     }
 
-    onPostUpdate(engine) {
+    onPostUpdate(engine, delta) {
+        // Score verhogen over tijd
         this.addPoints(1);
-        console.log(this.score);
+        this.spawnTimer += delta;
+
+        // Laat om de 2 seconden een obstakel spawnen
+        if (this.spawnTimer >= 2000) {
+            this.spawnObstacle();
+            this.spawnTimer = 0;
+        }
+    }
+
+    spawnObstacle() {
+        const isRock = Math.random() < 0.5; // Kans van 50% per soort
+        const obstacle = isRock
+            ? new Rock(1200)     // Rock spawnt op de grondhoogte
+            : new Zubat(1200);   // Zubat spawnt op hoofdhoogte
+
+        obstacle.z = 5; // Zorg dat deze zichtbaar is vóór de achtergrond
+        this.add(obstacle);
+
+        console.log(
+            `Spawned obstacle: ${isRock ? "Rock" : "Zubat"} at X: 1200, Y: ${obstacle.pos.y}`
+        );
     }
 }
