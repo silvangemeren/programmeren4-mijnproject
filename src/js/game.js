@@ -13,7 +13,7 @@ export class Game extends Engine {
     }
 
     constructor() {
-        super({ 
+        super({
             width: 980,
             height: 1020,
             maxFps: 60,
@@ -24,7 +24,14 @@ export class Game extends Engine {
         this.add('gameOver', new GameOverScene(this));
         this.add('BeginScene', new BeginScene(this));
 
-        this.start(ResourceLoader).then(() => this.startGame());
+        this.start(ResourceLoader)
+            .then(() => {
+                console.log('Resources zijn geladen.');
+                this.startGame();
+            })
+            .catch((error) => {
+                console.error('Fout bij het laden van resources:', error);
+            });
     }
 
     startGame() {

@@ -1,4 +1,3 @@
-
 import { Scene, Vector } from "excalibur";
 import { Zubat } from './zubat.js';
 import { Resources } from './resources.js';
@@ -23,34 +22,47 @@ export class MainGame extends Scene {
     onActivate() {
         console.log("start de game!");
 
-        // Score
-        this.score = 0;
-        this.scoreLabel = new ScoreLabel(this.score);
-        this.add(this.scoreLabel);
-
-        // Background
+        // **Achtergrond**
         const background = new Background();
+        background.z = -1; // Achter alle objecten plaatsen
         this.add(background);
 
-        // Rock
+        // **Score UI**
+        this.score = 0;
+        this.scoreLabel = new ScoreLabel(this.score);
+        this.scoreLabel.z = 10; // Scorelabel bovenop plaatsen
+        this.add(this.scoreLabel);
+
+        // **Rocks (obstakels)**
         const rock = new Rock(580, 200);
+        rock.z = 1; // Plaats Rocks bovenop de achtergrond
         this.add(rock);
 
-        // Player
+        // **Player**
         const player = new Bluerunner();
+        player.z = 1; // Player moet bovenop de achtergrond
         player.pos = new Vector(400, 800);
         this.add(player);
 
-        // Zubat
+        // **Zubat (vijand)**
         const zubat = new Zubat(500, 300);
+        zubat.z = 1; // Plaats Zubat bovenop de achtergrond
         this.add(zubat);
 
+        // **Collision Event**
         player.on('collisionstart', (event) => {
             if (event.other instanceof Zubat || event.other instanceof Rock) {
-                this.engine.goToScene('gameOver', { sceneActivationData: this.score });
-                for (const actor of this.actors) {
-                    actor.kill();
+                console.log('Collision detected! Switching to the GameOver scene...');
+
+                // Overgangen mogelijk maken naar GameOver
+                try {
+                    this.engine.goToScene('gameOver', { sceneActivationData: this.score });
+                } catch (e) {
+                    console.error('Fout tijdens het schakelen naar de gameOver-scène:', e);
                 }
+
+                // Zorg dat alle acteurs worden verwijderd
+                this.actors.forEach((actor) => actor.kill());
             }
         });
     }

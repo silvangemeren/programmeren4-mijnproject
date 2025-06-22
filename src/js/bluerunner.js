@@ -1,12 +1,14 @@
 import { Actor, Vector, Keys, CollisionType } from "excalibur";
 import { Resources } from './resources';
+import { Rock } from "./rock";
+import { Zubat } from "./zubat";
 
 export class Bluerunner extends Actor {
     constructor(width = 10, height = 10) {
         super({
             width: width,
             height: height,
-            collisionType: CollisionType.Active
+            collisionType: CollisionType.Active,
         });
     }
 
