@@ -22,12 +22,10 @@ export class Object extends Actor {
         // Update positie van het object
         this.pos.x += this.vel.x * (delta / 1000);
 
-        // Debug: Controleer objectpositie
-        console.log(`Object updated: x=${this.pos.x}`);
-
         // Verwijder object als het buiten de viewport gaat
         if (this.pos.x < -100) {
             this.kill();
+            this.emit("exitviewport")
         }
     }
 }

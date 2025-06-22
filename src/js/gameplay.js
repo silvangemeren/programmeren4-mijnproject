@@ -10,6 +10,7 @@ export class MainGame extends Scene {
     scoreLabel;
     spawnTimer = 0; // Timer voor het spawnen van obstakels
 
+    static highScore = 0;
     addPoints(points) {
         this.score += points;
         this.updateScore();
@@ -21,6 +22,10 @@ export class MainGame extends Scene {
 
     onActivate(context) {
         console.log("Start de game!");
+        this.score = 0;
+
+        // Verwijder alle bestaande objecten voordat je nieuwe toevoegt
+        this.clear();
 
         // **Achtergrond**
         const background = new Background();
@@ -36,11 +41,12 @@ export class MainGame extends Scene {
         const player = new Bluerunner();
         player.z = 1;
         this.add(player);
+
+        // Timer resetten
+        this.spawnTimer = 0;
     }
 
     onPostUpdate(engine, delta) {
-        // Score verhogen over tijd
-        this.addPoints(1);
         this.spawnTimer += delta;
 
         // Laat om de 2 seconden een obstakel spawnen
@@ -56,11 +62,15 @@ export class MainGame extends Scene {
             ? new Rock(1200)     // Rock spawnt op de grondhoogte
             : new Zubat(1200);   // Zubat spawnt op hoofdhoogte
 
-        obstacle.z = 5; // Zorg dat deze zichtbaar is vóór de achtergrond
+        // Als het object uit de viewport gaat, verhoog de score
+        obstacle.on("exitviewport", () => {
+            this.addPoints(10);
+        });
         this.add(obstacle);
-
-        console.log(
-            `Spawned obstacle: ${isRock ? "Rock" : "Zubat"} at X: 1200, Y: ${obstacle.pos.y}`
-        );
     }
+onDeactivate() {
+        if (this.score > MainGame.highScore) {
+            MainGame.highScore = this.score;
+        }
+}
 }

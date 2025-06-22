@@ -11,7 +11,8 @@ export class Game extends Engine {
             width: 980,
             height: 1020,
             maxFps: 60,
-            displayMode: DisplayMode.FitScreen
+            displayMode: DisplayMode.FitScreen,
+            suppressPlayButton: true // Verwijder het "Play Game" startscherm
         });
 
         // Debug-instellingen om colliders te visualiseren
